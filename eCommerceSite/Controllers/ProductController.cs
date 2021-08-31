@@ -94,6 +94,7 @@ namespace eCommerceSite.Controllers
 
             return View(p);
         }
+
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
@@ -120,5 +121,6 @@ namespace eCommerceSite.Controllers
 
             return RedirectToAction("Index");
         }
+
     }
 }

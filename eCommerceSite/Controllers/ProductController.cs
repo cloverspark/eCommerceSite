@@ -32,9 +32,9 @@ namespace eCommerceSite.Controllers
             int totalPages = (int)Math.Ceiling((double)numProducts / PageSize);
             ViewData["MaxPage"] = totalPages;
 
-            List<Product> products =
+            List<Product> products = 
                 await ProductDb.GetProductsAsync(_context, PageSize, pageNum);
-
+            
             // Send list of products to view to be displayed
             return View(products);
         }
@@ -66,9 +66,9 @@ namespace eCommerceSite.Controllers
         {
             // Get product with corresponding id
             Product p =
-                await (from prod in _context.Products
-                       where prod.ProductId == id
-                       select prod).SingleAsync();
+                await(from prod in _context.Products
+                      where prod.ProductId == id
+                      select prod).SingleAsync();
 
             //Product p2 = await _context
             //                .Products
@@ -97,8 +97,8 @@ namespace eCommerceSite.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             Product p = await (from prod in _context.Products
-                               where prod.ProductId == id
-                               select prod).SingleAsync();
+                        where prod.ProductId == id
+                        select prod).SingleAsync();
 
             return View(p);
         }
@@ -108,8 +108,8 @@ namespace eCommerceSite.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Product p = await (from prod in _context.Products
-                               where prod.ProductId == id
-                               select prod).SingleAsync();
+                        where prod.ProductId == id
+                        select prod).SingleAsync();
 
             _context.Entry(p).State = EntityState.Deleted;
 

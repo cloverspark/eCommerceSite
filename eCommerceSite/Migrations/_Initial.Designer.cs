@@ -9,7 +9,7 @@ using eCommerceSite.Data;
 namespace eCommerceSite.Migrations
 {
     [DbContext(typeof(ProductContext))]
-    [Migration("20200723001908_Initial")]
+    [Migration("_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

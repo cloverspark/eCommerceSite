@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 using eCommerceSite.Data;
 using eCommerceSite.Models;
 using Microsoft.AspNetCore.Mvc;
-
 using Microsoft.EntityFrameworkCore;
-
 
 namespace eCommerceSite.Controllers
 {
@@ -23,7 +21,6 @@ namespace eCommerceSite.Controllers
         /// <summary>
         /// Displays a view that lists a page of products
         /// </summary>
-
         public async Task<IActionResult> Index(int? id)
         {
             // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/operators/null-coalescing-operator
@@ -31,25 +28,13 @@ namespace eCommerceSite.Controllers
             const int PageSize = 3;
             ViewData["CurrentPage"] = pageNum;
 
-            int numProducts = await (from p in _context.Products
-                                     select p).CountAsync();
-
+            int numProducts = await ProductDb.GetTotalProductsAsync(_context);
             int totalPages = (int)Math.Ceiling((double)numProducts / PageSize);
-
             ViewData["MaxPage"] = totalPages;
-            // Get all products from database
-            // List<Product> products = _context.Products.ToList();
-            List<Product> products =
 
-                await (from p in _context.Products
-                       orderby p.Title ascending
-                       select p)
-                        .Skip(PageSize * (pageNum - 1)) // Skip() must be before Take()
-                        .Take(PageSize)
-                        .ToListAsync();
-
-
-
+            List<Product> products = 
+                await ProductDb.GetProductsAsync(_context, PageSize, pageNum);
+            
             // Send list of products to view to be displayed
             return View(products);
         }
@@ -65,9 +50,7 @@ namespace eCommerceSite.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Add to DB
-                _context.Products.Add(p);
-                await _context.SaveChangesAsync();
+                await ProductDb.AddProductAsync(_context, p);
 
                 TempData["Message"] = $"{p.Title} was added successfully";
 
@@ -77,14 +60,15 @@ namespace eCommerceSite.Controllers
 
             return View();
         }
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             // Get product with corresponding id
             Product p =
-                await (from prod in _context.Products
-                       where prod.ProductId == id
-                       select prod).SingleAsync();
+                await(from prod in _context.Products
+                      where prod.ProductId == id
+                      select prod).SingleAsync();
 
             //Product p2 = await _context
             //                .Products
@@ -113,8 +97,8 @@ namespace eCommerceSite.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             Product p = await (from prod in _context.Products
-                               where prod.ProductId == id
-                               select prod).SingleAsync();
+                        where prod.ProductId == id
+                        select prod).SingleAsync();
 
             return View(p);
         }
@@ -124,8 +108,8 @@ namespace eCommerceSite.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Product p = await (from prod in _context.Products
-                               where prod.ProductId == id
-                               select prod).SingleAsync();
+                        where prod.ProductId == id
+                        select prod).SingleAsync();
 
             _context.Entry(p).State = EntityState.Deleted;
 
@@ -135,6 +119,5 @@ namespace eCommerceSite.Controllers
 
             return RedirectToAction("Index");
         }
-
     }
 }

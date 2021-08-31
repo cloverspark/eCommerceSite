@@ -1,11 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using eCommerceSite.Data;
 using eCommerceSite.Models;
 using Microsoft.AspNetCore.Mvc;
+
 using Microsoft.EntityFrameworkCore;
+
 
 namespace eCommerceSite.Controllers
 {
@@ -21,13 +23,17 @@ namespace eCommerceSite.Controllers
         /// <summary>
         /// Displays a view that lists all products
         /// </summary>
+
         public async Task<IActionResult> Index()
+
         {
             // Get all products from database
             // List<Product> products = _context.Products.ToList();
             List<Product> products =
+
                  await(from p in _context.Products
                        select p).ToListAsync();
+
 
 
             // Send list of products to view to be displayed

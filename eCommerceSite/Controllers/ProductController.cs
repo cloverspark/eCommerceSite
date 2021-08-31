@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 using eCommerceSite.Data;
 using eCommerceSite.Models;
 using Microsoft.AspNetCore.Mvc;
-
 using Microsoft.EntityFrameworkCore;
-
 
 namespace eCommerceSite.Controllers
 {
@@ -21,20 +19,21 @@ namespace eCommerceSite.Controllers
         }
 
         /// <summary>
-        /// Displays a view that lists all products
+        /// Displays a view that lists a page of products
         /// </summary>
-
-        public async Task<IActionResult> Index()
-
+        public async Task<IActionResult> Index(int? id)
         {
-            // Get all products from database
-            // List<Product> products = _context.Products.ToList();
+            // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/operators/null-coalescing-operator
+            int pageNum = id ?? 1;
+            const int PageSize = 3;
+            ViewData["CurrentPage"] = pageNum;
+
+            int numProducts = await ProductDb.GetTotalProductsAsync(_context);
+            int totalPages = (int)Math.Ceiling((double)numProducts / PageSize);
+            ViewData["MaxPage"] = totalPages;
+
             List<Product> products =
-
-                 await(from p in _context.Products
-                       select p).ToListAsync();
-
-
+                await ProductDb.GetProductsAsync(_context, PageSize, pageNum);
 
             // Send list of products to view to be displayed
             return View(products);
@@ -51,9 +50,7 @@ namespace eCommerceSite.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Add to DB
-                _context.Products.Add(p);
-                await _context.SaveChangesAsync();
+                await ProductDb.AddProductAsync(_context, p);
 
                 TempData["Message"] = $"{p.Title} was added successfully";
 
@@ -63,6 +60,7 @@ namespace eCommerceSite.Controllers
 
             return View();
         }
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -121,6 +119,5 @@ namespace eCommerceSite.Controllers
 
             return RedirectToAction("Index");
         }
-
     }
 }

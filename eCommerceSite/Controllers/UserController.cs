@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using eCommerceSite.Data;
 using eCommerceSite.Models;
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 namespace eCommerceSite.Controllers
 {
     public class UserController : Controller
@@ -52,6 +52,8 @@ namespace eCommerceSite.Controllers
                 {
                     return View(reg);
                 }
+
+
                 // Map data to user account instance
                 UserAccount acc = new UserAccount()
                 {
@@ -65,12 +67,15 @@ namespace eCommerceSite.Controllers
                 _context.UserAccounts.Add(acc);
                 await _context.SaveChangesAsync();
 
+                LogUserIn(acc.UserId);
+
                 // redirect to home page
                 return RedirectToAction("Index", "Home");
             }
 
             return View(reg);
         }
+
         public IActionResult Login()
         {
             // Check if user already logged in
@@ -110,12 +115,17 @@ namespace eCommerceSite.Controllers
                 return View(model);
             }
 
-            // Log user into website
-            HttpContext.Session.SetInt32("UserId", account.UserId);
-
+            LogUserIn(account.UserId);
 
             return RedirectToAction("Index", "Home");
         }
+
+        private void LogUserIn(int accountId)
+        {
+            // Log user into website
+            HttpContext.Session.SetInt32("UserId", accountId);
+        }
+
         public IActionResult Logout()
         {
             // Removes all current session data
@@ -123,6 +133,5 @@ namespace eCommerceSite.Controllers
 
             return RedirectToAction(actionName: "Index", controllerName: "Home");
         }
-
     }
 }

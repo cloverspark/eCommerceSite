@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using eCommerceSite.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +33,19 @@ namespace eCommerceSite
 
             // ALTERNATIVE TO LAMBDA EXPRESSION SYNTAX
             //services.AddDbContext<ProductContext>(AddSqlServer);
+
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.IsEssential = true;
+            });
+
+            services.AddHttpContextAccessor();
+
+            // Same as above
+            // services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
         //private void AddSqlServer(DbContextOptionsBuilder options)
@@ -58,6 +72,9 @@ namespace eCommerceSite
             app.UseRouting();
 
             app.UseAuthorization();
+
+            // Must be between UseRouting() and UseEndpoints()
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

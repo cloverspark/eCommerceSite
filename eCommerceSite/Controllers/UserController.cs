@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using eCommerceSite.Data;
 using eCommerceSite.Models;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
 namespace eCommerceSite.Controllers
 {
     public class UserController : Controller
@@ -48,7 +48,6 @@ namespace eCommerceSite.Controllers
 
             return View(reg);
         }
-
         public IActionResult Login()
         {
             // Check if user already logged in
@@ -94,5 +93,6 @@ namespace eCommerceSite.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
     }
 }
